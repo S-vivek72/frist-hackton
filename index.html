@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game with Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .top-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #score {
+            font-size: 20px;
+            color: blueviolet;
+        }
+
+        #restart-btn {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #restart-btn:hover {
+            background-color: #555;
+        }
+
+        .info, .login {
+            width: 45%;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #a79393;
+            box-shadow: 0 0 10px rgba(36, 12, 143, 0.788);
+            border-top-right-radius: 70px;
+            border-bottom-left-radius: 70px;
+            text-align: left;
+            margin: 20px;
+        }
+
+        .info {
+            margin-right: 40px;
+        }
+
+        .login {
+            margin-left: 40px;
+        }
+
+        .login h2 {
+            text-align: center;
+            color: #444;
+            font-family: 'Lucida Sans';
+        }
+
+        .login label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .login input[type="text"],
+        .login input[type="password"],
+        .login input[type="number"] {
+            width: 90%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .login input[type="submit"] {
+            width: 50%;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex; 
+            justify-content: center;
+        }
+
+        .login input[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+
+        .container {
+            width: 300px;
+            margin: 50px auto;
+            background-color: green;
+            border-radius: 5px;
+            padding: 10px;
+            display: none; 
+        }
+
+        .tile {
+            width: 60px;
+            height: 60px;
+            background-color: #2edf17;
+            margin: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .tile-2 { background-color: #eee4da; }
+        .tile-4 { background-color: #ede0c8; }
+        .tile-8 { background-color: #f2b179; color: #f9f6f2; }
+        .tile-16 { background-color: #f59563; color: #f9f6f2; }
+        .tile-32 { background-color: #f67c5f; color: #f9f6f2; }
+        .tile-64 { background-color: #f65e3b; color: #f9f6f2; }
+        .tile-128 { background-color: #edcf72; color: #f9f6f2; }
+        .tile-256 { background-color: #edcc61; color: #f9f6f2; }
+        .tile-512 { background-color: #edc850; color: #f9f6f2; }
+        .tile-1024 { background-color: #edc53f; color: #f9f6f2; }
+        .tile-2048 { background-color: #edc22e; color: #f9f6f2; }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        footer {
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>Welcome to the Portal</header>
+    <div class="top-right">
+        <span id="score">Score: 0</span>
+        <button id="restart-btn">Restart</button>
+    </div>
+    <div class="info" id="info-section">
+        <p>Game is a fun and addictive puzzle game. The goal is to combine tiles with the same numbers to reach the 2048 tile!</p>
+        <p>Login on the right to start playing. Good luck!</p>
+    </div>
+    <div class="login" id="login-section">
+        <h2>LOGIN</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name"><br>
+        <label for="email">Email:</label>
+        <input type="text" id="email"><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password"><br>
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="number" id="phoneNumber"><br>
+        <input type="submit" value="Login" onclick="validateLogin()">
+    </div>
+    <div class="container" id="game-board">
+        <div class="row">
+            <div class="tile" id="tile-0-0"></div>
+            <div class="tile" id="tile-0-1"></div>
+            <div class="tile" id="tile-0-2"></div>
+            <div class="tile" id="tile-0-3"></div>
+        </div>
+        <div class="row">
+            <div class="tile" id="tile-1-0"></div>
+            <div class="tile" id="tile-1-1"></div>
+            <div class="tile" id="tile-1-2"></div>
+            <div class="tile" id="tile-1-3"></div>
+        </div>
+        <div class="row">
+            <div class="tile" id="tile-2-0"></div>
+            <div class="tile" id="tile-2-1"></div>
+            <div class="tile" id="tile-2-2"></div>
+            <div class="tile" id="tile-2-3"></div>
+        </div>
+        <div class="row">
+            <div class="tile" id="tile-3-0"></div>
+            <div class="tile" id="tile-3-1"></div>
+            <div class="tile" id="tile-3-2"></div>
+            <div class="tile" id="tile-3-3"></div>
+        </div>
+    </div>
+    <footer>&copy; 2024 Vivek. All rights reserved</footer>
+
+    <script>
+        let score = 0;
+
+        function updateScore(value) {
+            score += value;
+            document.getElementById('score').textContent =` Score: ${score}`;
+        }
+
+        function validateLogin() {
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const phoneNumber = document.getElementById("phoneNumber").value;
+
+            if (name && email && password && phoneNumber) {
+                document.querySelector(".login").style.display = "none";
+                document.querySelector(".container").style.display = "block";
+                document.getElementById("info-section").classList.add("hidden");
+            } else {
+                alert("Please fill out all fields");
+            }
+        }
+
+        const size = 4;
+        let board = [];
+
+        function initBoard() {
+            board = Array(size).fill(null).map(() => Array(size).fill(0));
+            addRandomTile();
+            addRandomTile();
+            updateBoard();
+        }
+
+        function addRandomTile() {
+            let emptyTiles = [];
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (board[r][c] === 0) {
+                        emptyTiles.push({r, c});
+                    }
+                }
+            }
+
+            if (emptyTiles.length === 0) return;
+
+            let {r, c} = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+            board[r][c] = Math.random() < 0.9 ? 2 : 4;
+        }
+
+        function updateBoard() {
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    let tile = document.getElementById(`tile-${r}-${c}`);
+                    let value = board[r][c];
+                    tile.textContent = value === 0 ? '' : value;
+                    tile.className = `tile tile-${value}`;
+                }
+            }
+        }
+
+        function moveLeft() {
+            let moved = false;
+            for (let r = 0; r < size; r++) {
+                let newRow = board[r].filter(val => val);
+                while (newRow.length < size) newRow.push(0);
+
+                for (let c = 0; c < size - 1; c++) {
+                    if (newRow[c] === newRow[c + 1] && newRow[c] !== 0) {
+                        newRow[c] *= 2;
+                        updateScore(newRow[c]);
+                        newRow.splice(c + 1, 1);
+                        newRow.push(0);
+                    }
+                }
+
+                if (board[r].join('') !== newRow.join('')) {
+                    moved = true;
+                    board[r] = newRow;
+                }
+            }
+            return moved;
+        }
+
+        function moveRight() {
+            reverseBoard();
+            let moved = moveLeft();
+            reverseBoard();
+            return moved;
+        }
+
+        function moveUp() {
+            transposeBoard();
+            let moved = moveLeft();
+            transposeBoard();
+            return moved;
+        }
+
+        function moveDown() {
+            transposeBoard();
+            let moved = moveRight();
+            transposeBoard();
+            return moved;
+        }
+
+        function reverseBoard() {
+            board.forEach(row => row.reverse());
+        }
+
+        function transposeBoard() {
+            board = board[0].map((_, colIndex) => board.map(row => row[colIndex]));
+        }
+
+        function checkGameOver() {
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (board[r][c] === 0) return false;
+                    if (c < size - 1 && board[r][c] === board[r][c + 1]) return false;
+                    if (r < size - 1 && board[r][c] === board[r + 1][c]) return false;
+                }
+            }
+            return true;
+        }
+
+        window.addEventListener('keydown', (e) => {
+            let moved = false;
+            switch (e.key) {
+                case 'ArrowLeft':
+                    moved = moveLeft();
+                    break;
+                case 'ArrowRight':
+                    moved = moveRight();
+                    break;
+                case 'ArrowUp':
+                    moved = moveUp();
+                    break;
+                case 'ArrowDown':
+                    moved = moveDown();
+                    break;
+            }
+
+            if (moved) {
+                addRandomTile();
+                updateBoard();
+                if (checkGameOver()) {
+                    setTimeout(() => alert('Game Over!'), 100);
+                }
+            }
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            score = 0;
+            updateScore(0);
+            initBoard();
+        });
+
+        initBoard();
+    </script>
+</body>
+</html>
