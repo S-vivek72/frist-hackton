@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Game Login</title>
+    <title>Game Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,11 +38,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            visibility: hidden; /* Initially hidden */
         }
 
         #score, #best-score {
             font-size: 20px;
-            color:violet;
+            color: violet;
         }
 
         #restart-btn {
@@ -106,7 +108,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            display: flex; 
+            display: flex;
             justify-content: center;
         }
 
@@ -120,7 +122,7 @@
             background-color: green;
             border-radius: 5px;
             padding: 10px;
-            display: none; 
+            display: none;
         }
 
         .tile {
@@ -175,13 +177,33 @@
             text-align: center;
             margin-top: 20px;
         }
+
+        /* Media query for responsiveness */
+        @media (max-width: 768px) {
+            .info, .login {
+                width: 100%;
+                margin: 10px;
+            }
+
+            .container {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .tile {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                line-height: 50px;
+            }
+        }
     </style>
 </head>
 <body>
     <header>Welcome to the Portal</header>
-    <div class="top-right">
+    <div class="top-right" id="score-section">
         <span id="score">Score: 0</span>
-        <span id="best-score">Best Score: 0</span> 
+        <span id="best-score">Best Score: 0</span>
         <button id="restart-btn">Restart</button>
     </div>
     <div id="game-over-message">Your moves are completed!</div> 
@@ -236,31 +258,41 @@
 
         function updateScore(value) {
             score += value;
-            document.getElementById('score').textContent = `Score: ${score}`;
+            document.getElementById('score').textContent =` Score: ${score}`;
             if (score > bestScore) {
                 bestScore = score;
-                localStorage.setItem('bestScore', bestScore);
                 document.getElementById('best-score').textContent = `Best Score: ${bestScore}`;
+                localStorage.setItem('bestScore', bestScore);
             }
         }
+
+        function restartGame() {
+            score = 0;
+            document.getElementById('score').textContent = `Score: ${score}`;
+            // Clear game board logic here
+        }
+
+        document.getElementById('restart-btn').addEventListener('click', restartGame);
 
         function validateLogin() {
-            const name = document.getElementById("name").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const phoneNumber = document.getElementById("phoneNumber").value;
+            let name = document.getElementById('name').value;
+            let email = document.getElementById('email').value;
+            let password = document.getElementById('password').value;
+            let phoneNumber = document.getElementById('phoneNumber').value;
 
-            if (name && email && password && phoneNumber) {
-                document.getElementById("game-board").style.display = "block";
-                document.getElementById("login-section").style.display = "none";
-                document.getElementById("info-section").style.display = "none";
-                initBoard();
-            } else {
-                alert("Please fill in all the fields.");
+            if (!name || !email || !password || !phoneNumber) {
+                alert("Please fill all fields");
+                return;
             }
-        }
 
-        const size = 4;
+            // Hide login section and show game and score
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('info-section').style.display = 'none';
+            document.getElementById('game-board').style.display = 'block';
+            document.getElementById('score-section').style.visibility = 'visible';
+
+            alert("Login Successful! Let's start the game!");
+            const size = 4;
         let board = [];
         
         function initBoard() {
@@ -438,6 +470,7 @@
         });
 
         initBoard();
+        }
     </script>
 </body>
 </html>
