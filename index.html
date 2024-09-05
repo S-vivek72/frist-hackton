@@ -471,6 +471,64 @@
 
         initBoard();
         }
+        let startX, startY, endX, endY;
+
+        function handleTouchStart(event) {
+            const touch = event.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+        }
+
+        function handleTouchMove(event) {
+            event.preventDefault(); // Prevent scrolling
+        }
+
+        function handleTouchEnd(event) {
+            const touch = event.changedTouches[0];
+            endX = touch.clientX;
+            endY = touch.clientY;
+
+            const diffX = endX - startX;
+            const diffY = endY - startY;
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0) {
+                    moveRight();
+                } else {
+                    moveLeft();
+                }
+            } else {
+                if (diffY > 0) {
+                    moveDown();
+                } else {
+                    moveUp();
+                }
+            }
+        }
+
+        document.addEventListener('touchstart', handleTouchStart);
+        document.addEventListener('touchmove', handleTouchMove);
+        document.addEventListener('touchend', handleTouchEnd);
+
+        function moveLeft() {
+            console.log('Left swipe detected');
+            // Move left logic here
+        }
+
+        function moveRight() {
+            console.log('Right swipe detected');
+            // Move right logic here
+        }
+
+        function moveUp() {
+            console.log('Up swipe detected');
+            // Move up logic here
+        }
+
+        function moveDown() {
+            console.log('Down swipe detected');
+            // Move down logic here
+        }
     </script>
 </body>
 </html>
